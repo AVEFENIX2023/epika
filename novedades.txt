@@ -1,0 +1,4 @@
+✨ Versión 4.2
+- Primera versión oficial con actualización automática
+- Sistema de temas mejorado
+- Cronómetro integrado

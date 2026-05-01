@@ -1,0 +1,434 @@
+/* =========================================================
+   TEMA BRASA — VIDRIO NEGRO VOLCÁNICO
+   SOLO TEMA VISUAL
+   NO TOCA IMÁGENES
+   NO TOCA ESTRUCTURA
+   NO TOCA JS
+========================================================= */
+
+body.brasa {
+  --bg:
+    radial-gradient(circle at 18% 8%, rgba(255, 92, 0, .20), transparent 28%),
+    radial-gradient(circle at 80% 85%, rgba(180, 20, 0, .18), transparent 34%),
+    linear-gradient(135deg, #050404 0%, #120806 48%, #050404 100%);
+
+  --card: rgba(18, 12, 10, .88);
+  --fg: #fff1e6;
+
+  --accent: #ff6a00;
+  --accent-2: #ff2d00;
+
+  --muted: rgba(255, 150, 90, .42);
+  --focus: rgba(255, 106, 0, .70);
+
+  --success: #ff6a00;
+  --danger: #ff2d00;
+  --warning: #ffb000;
+  --info: #ff6a00;
+  --violet: #ff6a00;
+
+  --ella-bg: linear-gradient(180deg, rgba(38, 32, 32, .96), rgba(7, 5, 5, .98));
+  --el-bg: linear-gradient(180deg, rgba(38, 32, 32, .96), rgba(7, 5, 5, .98));
+
+  --ella-emocion-bg: linear-gradient(180deg, rgba(35, 28, 26, .96), rgba(7, 5, 5, .98));
+  --el-emocion-bg: linear-gradient(180deg, rgba(35, 28, 26, .96), rgba(7, 5, 5, .98));
+
+  --radius: 16px;
+
+  --elev-1:
+    0 5px 16px rgba(0, 0, 0, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .10);
+
+  --elev-2:
+    0 12px 32px rgba(0, 0, 0, .72),
+    0 0 20px rgba(255, 80, 0, .14),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+
+  --elev-3:
+    0 16px 40px rgba(0, 0, 0, .78),
+    0 0 24px rgba(255, 80, 0, .18);
+
+  --speed: 230ms;
+
+  --boton-emocion-bg: linear-gradient(180deg, rgba(34, 28, 26, .96), rgba(6, 5, 5, .98));
+  --boton-emocion-hover: linear-gradient(180deg, rgba(58, 42, 34, .98), rgba(10, 6, 5, 1));
+
+  --scrollbar-track: rgba(10, 7, 6, .95);
+  --scrollbar-thumb: rgba(255, 106, 0, .55);
+  --scrollbar-thumb-hover: rgba(255, 106, 0, .9);
+
+  --oracion-activa-bg: rgba(255, 106, 0, .16);
+  --oracion-activa-border: rgba(255, 106, 0, .65);
+  --palabra-activa-bg: rgba(255, 45, 0, .32);
+
+  --cronometro-bg: rgba(18, 12, 10, .92);
+  --cronometro-text: #fff1e6;
+  --cronometro-button-bg: linear-gradient(180deg, rgba(34, 28, 26, .96), rgba(6, 5, 5, .98));
+  --cronometro-button-text: #fff1e6;
+}
+
+body.brasa {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* =========================================================
+   PANELES VIDRIO OSCURO
+========================================================= */
+
+body.brasa #zonaSuperior,
+body.brasa #zonaInferior,
+body.brasa #selectorTema select {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(28, 20, 18, .90) 0%,
+      rgba(12, 8, 7, .94) 58%,
+      rgba(5, 4, 4, .98) 100%
+    );
+
+  border-color: rgba(255, 106, 0, .72);
+  color: var(--fg);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .68),
+    0 0 22px rgba(255, 80, 0, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    inset 0 -1px 0 rgba(0, 0, 0, .75);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* =========================================================
+   BOTÓN VIDRIO NEGRO — BASE
+========================================================= */
+
+body.brasa button,
+body.brasa .enviar,
+body.brasa .guardar,
+body.brasa .borrar,
+body.brasa .pausar,
+body.brasa .reanudar,
+body.brasa .detener,
+body.brasa .desbloquear,
+body.brasa .botonEmocion,
+body.brasa button[onclick="leerTodoConEl()"],
+body.brasa button[onclick="leerTodoConElla()"] {
+  color: #fff4ea !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .055) 18%,
+      rgba(32, 28, 26, .94) 19%,
+      rgba(10, 8, 7, .98) 58%,
+      rgba(3, 3, 3, 1) 100%
+    ) !important;
+
+  border: 1px solid rgba(255, 118, 38, .54) !important;
+
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, .68),
+    0 0 0 1px rgba(255, 255, 255, .035),
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    inset 10px 0 22px rgba(255, 255, 255, .035),
+    inset 0 -1px 0 rgba(0, 0, 0, .85) !important;
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, .75);
+
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* =========================================================
+   BRILLO FIJO DE VIDRIO
+========================================================= */
+
+body.brasa button::before,
+body.brasa .botonEmocion::before {
+  content: "";
+  position: absolute;
+
+  top: -120%;
+  left: -40%;
+
+  width: 42%;
+  height: 320%;
+
+  transform:
+    rotate(24deg)
+    translateX(-220%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.02) 20%,
+      rgba(255,255,255,.18) 48%,
+      rgba(255,255,255,.38) 50%,
+      rgba(255,255,255,.12) 52%,
+      transparent 100%
+    );
+
+  filter: blur(1px);
+  opacity: .55;
+  pointer-events: none;
+}
+
+/* =========================================================
+   BRILLO DE MOUSE
+========================================================= */
+
+body.brasa button::after {
+  background:
+    radial-gradient(
+      110px 90px at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 148, 64, .32),
+      transparent 62%
+    );
+}
+
+/* =========================================================
+   HOVER VIDRIO ENCENDIDO
+========================================================= */
+
+body.brasa button:hover,
+body.brasa .botonEmocion:hover,
+body.brasa button[onclick="leerTodoConEl()"]:hover,
+body.brasa button[onclick="leerTodoConElla()"]:hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .22) 0%,
+      rgba(255, 255, 255, .075) 18%,
+      rgba(46, 36, 32, .96) 19%,
+      rgba(15, 9, 7, 1) 58%,
+      rgba(4, 3, 3, 1) 100%
+    ) !important;
+
+  border-color: rgba(255, 150, 72, .95) !important;
+
+  box-shadow:
+    0 0 20px rgba(255, 92, 0, .34),
+    0 9px 24px rgba(0, 0, 0, .72),
+    inset 0 1px 0 rgba(255, 255, 255, .28),
+    inset 12px 0 24px rgba(255, 255, 255, .045),
+    inset 0 -1px 0 rgba(0, 0, 0, .9) !important;
+
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   RECORRIDO DE BRILLO EN HOVER
+========================================================= */
+
+body.brasa button:hover::before,
+body.brasa .botonEmocion:hover::before {
+  animation: brasaSweep 1.1s cubic-bezier(.19,.84,.42,1);
+}
+
+@keyframes brasaSweep {
+  0% {
+    transform:
+      rotate(24deg)
+      translateX(-260%);
+  }
+
+  100% {
+    transform:
+      rotate(24deg)
+      translateX(520%);
+  }
+}
+
+/* =========================================================
+   BOTONES PEQUEÑOS DE EMOCIÓN
+========================================================= */
+
+body.brasa .botonEmocion {
+  border-color: rgba(255, 118, 38, .42) !important;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    inset 0 -1px 0 rgba(0, 0, 0, .8) !important;
+}
+
+/* =========================================================
+   SLIDER
+========================================================= */
+
+body.brasa #sliderVelocidad {
+  background:
+    linear-gradient(90deg, #ff6a00, #ff2d00, #ffb000);
+}
+
+body.brasa #sliderVelocidad::-webkit-slider-thumb {
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255,255,255,.55),
+      rgba(20,20,20,.95) 40%,
+      #050505 100%
+    );
+
+  border: 2px solid rgba(255, 106, 0, .9);
+
+  box-shadow:
+    0 0 14px rgba(255, 92, 0, .65),
+    0 4px 10px rgba(0, 0, 0, .6);
+}
+
+/* =========================================================
+   TEXTO Y RESALTADO
+========================================================= */
+
+body.brasa #mensajeEtiquetaActiva {
+  color: #ff9a3c;
+  text-shadow: 0 0 10px rgba(255, 92, 0, .38);
+}
+
+body.brasa .oracion-activa {
+  background: rgba(255, 106, 0, .16);
+
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 106, 0, .65),
+    0 0 14px rgba(255, 92, 0, .18);
+}
+
+body.brasa .palabra-activa {
+  background: rgba(255, 92, 0, .38);
+  color: #fff4ea;
+}
+
+/* =========================================================
+   BRILLO VIVO EN EL BORDE — SIN ROMPER CAJAS GRANDES
+========================================================= */
+
+@keyframes selvaPanelGlow {
+  0% {
+    border-color: rgba(25,230,140,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(25,230,140,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  50% {
+    border-color: rgba(156,255,87,.88);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 26px rgba(25,230,140,.24),
+      0 0 42px rgba(156,255,87,.10),
+      inset 0 1px 0 rgba(255,255,255,.10),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  100% {
+    border-color: rgba(25,230,140,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(25,230,140,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+}
+
+/* =========================================================
+   CRONÓMETRO — SOLO LOOK, SIN TOCAR POSICIÓN NI DISPLAY
+========================================================= */
+
+body.brasa #cronometroVentana {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(28, 20, 18, .88),
+      rgba(8, 6, 5, .96)
+    );
+
+  border: 1px solid rgba(255, 106, 0, .58);
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, .70),
+    0 0 18px rgba(255, 92, 0, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .12);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+body.brasa #cronometroVentana button {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .05) 18%,
+      rgba(32, 28, 26, .94) 19%,
+      rgba(8, 6, 5, .98) 100%
+    ) !important;
+
+  border: 1px solid rgba(255, 118, 38, .48) !important;
+  color: #fff4ea !important;
+}
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+body.brasa #zonaSuperior::-webkit-scrollbar-track {
+  background: rgba(10, 7, 6, .95);
+}
+
+body.brasa #zonaSuperior::-webkit-scrollbar-thumb {
+  background: rgba(255, 106, 0, .55);
+}
+
+body.brasa #zonaSuperior::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 106, 0, .9);
+}
+/* =========================================================
+   BRILLO VIVO EN BORDE — BRASA
+   NO TOCA ESTRUCTURA
+========================================================= */
+
+body.brasa #zonaSuperior,
+body.brasa #zonaInferior {
+  animation: brasaPanelGlow 3.8s ease-in-out infinite;
+}
+
+@keyframes brasaPanelGlow {
+  0% {
+    border-color: rgba(255,106,0,.42);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 12px rgba(255,92,0,.10),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  50% {
+    border-color: rgba(255,176,64,.92);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 28px rgba(255,92,0,.32),
+      0 0 48px rgba(255,45,0,.14),
+      inset 0 1px 0 rgba(255,255,255,.12),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  100% {
+    border-color: rgba(255,106,0,.42);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 12px rgba(255,92,0,.10),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+}

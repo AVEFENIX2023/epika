@@ -1,0 +1,379 @@
+/* =========================================================
+   TEMA SELVA ANDINA — VIDRIO NEGRO ESMERALDA
+   SOLO VISUAL
+   NO TOCA IMÁGENES
+   NO TOCA ESTRUCTURA
+   NO TOCA JS
+   NO MODIFICA POSICIÓN/DISPLAY DEL CRONÓMETRO
+========================================================= */
+
+body.selva {
+  --bg:
+    radial-gradient(circle at 14% 8%, rgba(20,184,110,.18), transparent 30%),
+    radial-gradient(circle at 78% 18%, rgba(132,204,22,.10), transparent 28%),
+    radial-gradient(circle at 72% 88%, rgba(6,95,70,.22), transparent 36%),
+    linear-gradient(135deg, #020806 0%, #06150f 48%, #010403 100%);
+
+  --card: rgba(6,18,13,.90);
+  --fg: #eafff4;
+
+  --accent: #19e68c;
+  --accent-2: #9cff57;
+
+  --muted: rgba(120,255,190,.38);
+  --focus: rgba(156,255,87,.72);
+
+  --success: #19e68c;
+  --danger: #19e68c;
+  --warning: #9cff57;
+  --info: #19e68c;
+  --violet: #19e68c;
+
+  --ella-bg: linear-gradient(180deg, rgba(18,38,30,.96), rgba(3,8,6,.98));
+  --el-bg: linear-gradient(180deg, rgba(18,38,30,.96), rgba(3,8,6,.98));
+
+  --ella-emocion-bg: linear-gradient(180deg, rgba(16,34,27,.96), rgba(3,8,6,.98));
+  --el-emocion-bg: linear-gradient(180deg, rgba(16,34,27,.96), rgba(3,8,6,.98));
+
+  --radius: 18px;
+
+  --elev-1:
+    0 5px 16px rgba(0,0,0,.62),
+    inset 0 1px 0 rgba(255,255,255,.09);
+
+  --elev-2:
+    0 14px 34px rgba(0,0,0,.72),
+    0 0 22px rgba(25,230,140,.12),
+    inset 0 1px 0 rgba(255,255,255,.06);
+
+  --elev-3:
+    0 18px 44px rgba(0,0,0,.78),
+    0 0 26px rgba(25,230,140,.18);
+
+  --speed: 240ms;
+
+  --boton-emocion-bg: linear-gradient(180deg, rgba(16,34,27,.96), rgba(3,8,6,.98));
+  --boton-emocion-hover: linear-gradient(180deg, rgba(26,58,44,.98), rgba(4,12,8,1));
+
+  --scrollbar-track: rgba(3,8,6,.95);
+  --scrollbar-thumb: rgba(25,230,140,.50);
+  --scrollbar-thumb-hover: rgba(156,255,87,.85);
+
+  --oracion-activa-bg: rgba(25,230,140,.14);
+  --oracion-activa-border: rgba(156,255,87,.60);
+  --palabra-activa-bg: rgba(156,255,87,.28);
+
+  --cronometro-bg: rgba(6,18,13,.92);
+  --cronometro-text: #eafff4;
+  --cronometro-button-bg: linear-gradient(180deg, rgba(16,34,27,.96), rgba(3,8,6,.98));
+  --cronometro-button-text: #eafff4;
+}
+
+body.selva {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* =========================================================
+   PANELES PRINCIPALES
+========================================================= */
+
+body.selva #zonaSuperior,
+body.selva #zonaInferior,
+body.selva #selectorTema select {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10,30,22,.92) 0%,
+      rgba(4,14,10,.96) 58%,
+      rgba(1,5,4,.98) 100%
+    );
+
+  border-color: rgba(25,230,140,.66);
+  color: var(--fg);
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.72),
+    0 0 24px rgba(25,230,140,.10),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.75);
+
+  backdrop-filter: blur(15px) saturate(125%);
+  -webkit-backdrop-filter: blur(15px) saturate(125%);
+
+  animation: selvaPanelGlow 3.8s ease-in-out infinite;
+}
+
+/* =========================================================
+   BRILLO VIVO EN EL BORDE — SIN ROMPER CAJAS GRANDES
+========================================================= */
+
+@keyframes selvaPanelGlow {
+  0% {
+    border-color: rgba(25,230,140,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(25,230,140,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  50% {
+    border-color: rgba(156,255,87,.88);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 26px rgba(25,230,140,.24),
+      0 0 42px rgba(156,255,87,.10),
+      inset 0 1px 0 rgba(255,255,255,.10),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  100% {
+    border-color: rgba(25,230,140,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(25,230,140,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+}
+
+/* =========================================================
+   BOTONES VIDRIO NEGRO ESMERALDA
+========================================================= */
+
+body.selva button,
+body.selva .enviar,
+body.selva .guardar,
+body.selva .borrar,
+body.selva .pausar,
+body.selva .reanudar,
+body.selva .detener,
+body.selva .desbloquear,
+body.selva .botonEmocion,
+body.selva button[onclick="leerTodoConEl()"],
+body.selva button[onclick="leerTodoConElla()"] {
+  position: relative;
+  overflow: hidden;
+
+  color: #eafff4 !important;
+
+  background:
+    linear-gradient(
+      128deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.07) 15%,
+      rgba(18,42,31,.96) 16%,
+      rgba(5,12,9,.98) 58%,
+      rgba(1,3,2,1) 100%
+    ) !important;
+
+  border: 1px solid rgba(25,230,140,.52) !important;
+
+  box-shadow:
+    0 5px 16px rgba(0,0,0,.68),
+    0 0 0 1px rgba(255,255,255,.035),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 12px 0 24px rgba(180,255,210,.035),
+    inset 0 -1px 0 rgba(0,0,0,.86) !important;
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.78);
+
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+}
+
+/* brillo diagonal de botón */
+body.selva button::before,
+body.selva .botonEmocion::before {
+  content: "";
+  position: absolute;
+  top: -125%;
+  left: -42%;
+  width: 44%;
+  height: 330%;
+
+  transform:
+    rotate(22deg)
+    translateX(-240%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.025) 18%,
+      rgba(210,255,230,.16) 46%,
+      rgba(235,255,245,.38) 50%,
+      rgba(156,255,87,.13) 54%,
+      transparent 100%
+    );
+
+  filter: blur(1.1px);
+  opacity: .58;
+  pointer-events: none;
+}
+
+/* brillo radial del mouse */
+body.selva button::after {
+  background:
+    radial-gradient(
+      110px 90px at var(--mx,50%) var(--my,50%),
+      rgba(156,255,87,.30),
+      transparent 62%
+    );
+}
+
+/* hover botones */
+body.selva button:hover,
+body.selva .botonEmocion:hover,
+body.selva button[onclick="leerTodoConEl()"]:hover,
+body.selva button[onclick="leerTodoConElla()"]:hover {
+  background:
+    linear-gradient(
+      128deg,
+      rgba(255,255,255,.24) 0%,
+      rgba(255,255,255,.09) 15%,
+      rgba(28,72,50,.98) 16%,
+      rgba(5,18,12,1) 58%,
+      rgba(1,4,3,1) 100%
+    ) !important;
+
+  border-color: rgba(156,255,87,.88) !important;
+
+  box-shadow:
+    0 0 22px rgba(25,230,140,.32),
+    0 9px 24px rgba(0,0,0,.72),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 12px 0 24px rgba(180,255,210,.05),
+    inset 0 -1px 0 rgba(0,0,0,.90) !important;
+
+  transform: translateY(-2px);
+}
+
+/* recorrido de brillo de botón */
+body.selva button:hover::before,
+body.selva .botonEmocion:hover::before {
+  animation: selvaSweep 1.15s cubic-bezier(.19,.84,.42,1);
+}
+
+@keyframes selvaSweep {
+  0% {
+    transform:
+      rotate(22deg)
+      translateX(-270%);
+  }
+
+  100% {
+    transform:
+      rotate(22deg)
+      translateX(540%);
+  }
+}
+
+/* =========================================================
+   SLIDER
+========================================================= */
+
+body.selva #sliderVelocidad {
+  background:
+    linear-gradient(
+      90deg,
+      #19e68c,
+      #9cff57,
+      #00d9a3
+    );
+}
+
+body.selva #sliderVelocidad::-webkit-slider-thumb {
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255,255,255,.58),
+      rgba(15,28,20,.95) 42%,
+      #020806 100%
+    );
+
+  border: 2px solid rgba(25,230,140,.92);
+
+  box-shadow:
+    0 0 15px rgba(25,230,140,.68),
+    0 4px 10px rgba(0,0,0,.62);
+}
+
+/* =========================================================
+   TEXTO ACTIVO
+========================================================= */
+
+body.selva #mensajeEtiquetaActiva {
+  color: #9cff57;
+
+  text-shadow:
+    0 0 12px rgba(25,230,140,.40);
+}
+
+body.selva .oracion-activa {
+  background: rgba(25,230,140,.14);
+
+  box-shadow:
+    inset 0 0 0 2px rgba(156,255,87,.62),
+    0 0 14px rgba(25,230,140,.18);
+}
+
+body.selva .palabra-activa {
+  background: rgba(156,255,87,.30);
+  color: #eafff4;
+}
+
+/* =========================================================
+   CRONÓMETRO — SOLO LOOK, SIN TOCAR POSICIÓN NI DISPLAY
+========================================================= */
+
+body.selva #cronometroVentana {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10,30,22,.90),
+      rgba(3,9,6,.96)
+    );
+
+  border: 1px solid rgba(25,230,140,.58);
+
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.70),
+    0 0 18px rgba(25,230,140,.18),
+    inset 0 1px 0 rgba(255,255,255,.12);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+body.selva #cronometroVentana button {
+  background:
+    linear-gradient(
+      128deg,
+      rgba(255,255,255,.16) 0%,
+      rgba(255,255,255,.05) 15%,
+      rgba(18,42,31,.96) 16%,
+      rgba(4,10,7,.98) 100%
+    ) !important;
+
+  border: 1px solid rgba(25,230,140,.48) !important;
+  color: #eafff4 !important;
+}
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+body.selva #zonaSuperior::-webkit-scrollbar-track {
+  background: rgba(3,8,6,.95);
+}
+
+body.selva #zonaSuperior::-webkit-scrollbar-thumb {
+  background: rgba(25,230,140,.50);
+}
+
+body.selva #zonaSuperior::-webkit-scrollbar-thumb:hover {
+  background: rgba(156,255,87,.85);
+}

@@ -1,0 +1,435 @@
+/* =========================================================
+   TEMA AURORA — VIDRIO CÓSMICO VIOLETA
+   Inspirado en aurora boreal púrpura, cristal oscuro y lujo tecnológico.
+   SOLO TEMA VISUAL
+   NO TOCA IMÁGENES
+   NO TOCA ESTRUCTURA
+   NO TOCA JS
+========================================================= */
+
+body.aurora {
+  --bg:
+    radial-gradient(circle at 18% 8%, rgba(154, 92, 255, .22), transparent 28%),
+    radial-gradient(circle at 80% 85%, rgba(91, 33, 182, .20), transparent 34%),
+    linear-gradient(135deg, #05040a 0%, #150720 48%, #05040a 100%);
+
+  --card: rgba(18, 10, 28, .88);
+  --fg: #f5edff;
+
+  --accent: #9f67ff;
+  --accent-2: #7c3aed;
+
+  --muted: rgba(196, 160, 255, .42);
+  --focus: rgba(159, 103, 255, .70);
+
+  --success: #9f67ff;
+  --danger: #7c3aed;
+  --warning: #c084fc;
+  --info: #9f67ff;
+  --violet: #9f67ff;
+
+  --ella-bg: linear-gradient(180deg, rgba(30, 24, 42, .96), rgba(6, 4, 10, .98));
+  --el-bg: linear-gradient(180deg, rgba(30, 24, 42, .96), rgba(6, 4, 10, .98));
+
+  --ella-emocion-bg: linear-gradient(180deg, rgba(28, 22, 40, .96), rgba(6, 4, 10, .98));
+  --el-emocion-bg: linear-gradient(180deg, rgba(28, 22, 40, .96), rgba(6, 4, 10, .98));
+
+  --radius: 16px;
+
+  --elev-1:
+    0 5px 16px rgba(0, 0, 0, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .10);
+
+  --elev-2:
+    0 12px 32px rgba(0, 0, 0, .72),
+    0 0 20px rgba(159, 103, 255, .14),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+
+  --elev-3:
+    0 16px 40px rgba(0, 0, 0, .78),
+    0 0 24px rgba(159, 103, 255, .18);
+
+  --speed: 230ms;
+
+  --boton-emocion-bg: linear-gradient(180deg, rgba(28, 22, 40, .96), rgba(5, 4, 10, .98));
+  --boton-emocion-hover: linear-gradient(180deg, rgba(48, 34, 72, .98), rgba(8, 5, 14, 1));
+
+  --scrollbar-track: rgba(8, 6, 14, .95);
+  --scrollbar-thumb: rgba(159, 103, 255, .55);
+  --scrollbar-thumb-hover: rgba(192, 132, 252, .9);
+
+  --oracion-activa-bg: rgba(159, 103, 255, .16);
+  --oracion-activa-border: rgba(192, 132, 252, .65);
+  --palabra-activa-bg: rgba(124, 58, 237, .32);
+
+  --cronometro-bg: rgba(18, 12, 10, .92);
+  --cronometro-text: #f5edff;
+  --cronometro-button-bg: linear-gradient(180deg, rgba(28, 22, 40, .96), rgba(5, 4, 10, .98));
+  --cronometro-button-text: #f5edff;
+}
+
+body.aurora {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* =========================================================
+   PANELES VIDRIO OSCURO
+========================================================= */
+
+body.aurora #zonaSuperior,
+body.aurora #zonaInferior,
+body.aurora #selectorTema select {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(24, 16, 36, .90) 0%,
+      rgba(10, 7, 18, .94) 58%,
+      rgba(5, 4, 10, .98) 100%
+    );
+
+  border-color: rgba(159, 103, 255, .72);
+  color: var(--fg);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .68),
+    0 0 22px rgba(159, 103, 255, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    inset 0 -1px 0 rgba(0, 0, 0, .75);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* =========================================================
+   BOTÓN VIDRIO NEGRO — BASE
+========================================================= */
+
+body.aurora button,
+body.aurora .enviar,
+body.aurora .guardar,
+body.aurora .borrar,
+body.aurora .pausar,
+body.aurora .reanudar,
+body.aurora .detener,
+body.aurora .desbloquear,
+body.aurora .botonEmocion,
+body.aurora button[onclick="leerTodoConEl()"],
+body.aurora button[onclick="leerTodoConElla()"] {
+  color: #f7efff !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .055) 18%,
+      rgba(30, 24, 42, .94) 19%,
+      rgba(8, 6, 14, .98) 58%,
+      rgba(3, 3, 3, 1) 100%
+    ) !important;
+
+  border: 1px solid rgba(176, 122, 255, .54) !important;
+
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, .68),
+    0 0 0 1px rgba(255, 255, 255, .035),
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    inset 10px 0 22px rgba(255, 255, 255, .035),
+    inset 0 -1px 0 rgba(0, 0, 0, .85) !important;
+
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, .75);
+
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* =========================================================
+   BRILLO FIJO DE VIDRIO
+========================================================= */
+
+body.aurora button::before,
+body.aurora .botonEmocion::before {
+  content: "";
+  position: absolute;
+
+  top: -120%;
+  left: -40%;
+
+  width: 42%;
+  height: 320%;
+
+  transform:
+    rotate(24deg)
+    translateX(-220%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.02) 20%,
+      rgba(255,255,255,.18) 48%,
+      rgba(255,255,255,.38) 50%,
+      rgba(255,255,255,.12) 52%,
+      transparent 100%
+    );
+
+  filter: blur(1px);
+  opacity: .55;
+  pointer-events: none;
+}
+
+/* =========================================================
+   BRILLO DE MOUSE
+========================================================= */
+
+body.aurora button::after {
+  background:
+    radial-gradient(
+      110px 90px at var(--mx, 50%) var(--my, 50%),
+      rgba(192, 132, 252, .32),
+      transparent 62%
+    );
+}
+
+/* =========================================================
+   HOVER VIDRIO ENCENDIDO
+========================================================= */
+
+body.aurora button:hover,
+body.aurora .botonEmocion:hover,
+body.aurora button[onclick="leerTodoConEl()"]:hover,
+body.aurora button[onclick="leerTodoConElla()"]:hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .22) 0%,
+      rgba(255, 255, 255, .075) 18%,
+      rgba(42, 30, 62, .96) 19%,
+      rgba(12, 7, 22, 1) 58%,
+      rgba(5, 4, 10, 1) 100%
+    ) !important;
+
+  border-color: rgba(205, 166, 255, .95) !important;
+
+  box-shadow:
+    0 0 20px rgba(159, 103, 255, .34),
+    0 9px 24px rgba(0, 0, 0, .72),
+    inset 0 1px 0 rgba(255, 255, 255, .28),
+    inset 12px 0 24px rgba(255, 255, 255, .045),
+    inset 0 -1px 0 rgba(0, 0, 0, .9) !important;
+
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   RECORRIDO DE BRILLO EN HOVER
+========================================================= */
+
+body.aurora button:hover::before,
+body.aurora .botonEmocion:hover::before {
+  animation: auroraSweep 1.1s cubic-bezier(.19,.84,.42,1);
+}
+
+@keyframes auroraSweep {
+  0% {
+    transform:
+      rotate(24deg)
+      translateX(-260%);
+  }
+
+  100% {
+    transform:
+      rotate(24deg)
+      translateX(520%);
+  }
+}
+
+/* =========================================================
+   BOTONES PEQUEÑOS DE EMOCIÓN
+========================================================= */
+
+body.aurora .botonEmocion {
+  border-color: rgba(176, 122, 255, .42) !important;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    inset 0 -1px 0 rgba(0, 0, 0, .8) !important;
+}
+
+/* =========================================================
+   SLIDER
+========================================================= */
+
+body.aurora #sliderVelocidad {
+  background:
+    linear-gradient(90deg, #7c3aed, #9f67ff, #c084fc);
+}
+
+body.aurora #sliderVelocidad::-webkit-slider-thumb {
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255,255,255,.55),
+      rgba(22,14,34,.95) 40%,
+      #050505 100%
+    );
+
+  border: 2px solid rgba(192, 132, 252, .9);
+
+  box-shadow:
+    0 0 14px rgba(192, 132, 252, .65),
+    0 4px 10px rgba(0, 0, 0, .6);
+}
+
+/* =========================================================
+   TEXTO Y RESALTADO
+========================================================= */
+
+body.aurora #mensajeEtiquetaActiva {
+  color: #d8b4fe;
+  text-shadow: 0 0 10px rgba(192, 132, 252, .38);
+}
+
+body.aurora .oracion-activa {
+  background: rgba(159, 103, 255, .16);
+
+  box-shadow:
+    inset 0 0 0 2px rgba(192, 132, 252, .65),
+    0 0 14px rgba(159, 103, 255, .18);
+}
+
+body.aurora .palabra-activa {
+  background: rgba(192, 132, 252, .38);
+  color: #f7efff;
+}
+
+/* =========================================================
+   BRILLO VIVO EN EL BORDE — AURORA SUAVE
+========================================================= */
+
+@keyframes auroraPanelSoftGlow {
+  0% {
+    border-color: rgba(159,103,255,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(159,103,255,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  50% {
+    border-color: rgba(216,180,254,.88);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 26px rgba(159,103,255,.24),
+      0 0 42px rgba(216,180,254,.10),
+      inset 0 1px 0 rgba(255,255,255,.10),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  100% {
+    border-color: rgba(159,103,255,.42);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.72),
+      0 0 12px rgba(159,103,255,.08),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+}
+
+/* =========================================================
+   CRONÓMETRO — SOLO LOOK, SIN TOCAR POSICIÓN NI DISPLAY
+========================================================= */
+
+body.aurora #cronometroVentana {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(24, 16, 36, .88),
+      rgba(7, 5, 14, .96)
+    );
+
+  border: 1px solid rgba(159, 103, 255, .58);
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, .70),
+    0 0 18px rgba(159, 103, 255, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .12);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+body.aurora #cronometroVentana button {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .05) 18%,
+      rgba(30, 24, 42, .94) 19%,
+      rgba(8, 6, 5, .98) 100%
+    ) !important;
+
+  border: 1px solid rgba(255, 118, 38, .48) !important;
+  color: #f7efff !important;
+}
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+body.aurora #zonaSuperior::-webkit-scrollbar-track {
+  background: rgba(8, 6, 14, .95);
+}
+
+body.aurora #zonaSuperior::-webkit-scrollbar-thumb {
+  background: rgba(159, 103, 255, .55);
+}
+
+body.aurora #zonaSuperior::-webkit-scrollbar-thumb:hover {
+  background: rgba(192, 132, 252, .9);
+}
+/* =========================================================
+   BRILLO VIVO EN BORDE — AURORA
+   NO TOCA ESTRUCTURA
+========================================================= */
+
+body.aurora #zonaSuperior,
+body.aurora #zonaInferior {
+  animation: auroraPanelGlow 3.8s ease-in-out infinite;
+}
+
+@keyframes auroraPanelGlow {
+  0% {
+    border-color: rgba(159,103,255,.42);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 12px rgba(159,103,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  50% {
+    border-color: rgba(216,180,254,.92);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 28px rgba(159,103,255,.32),
+      0 0 48px rgba(124,58,237,.14),
+      inset 0 1px 0 rgba(255,255,255,.12),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+
+  100% {
+    border-color: rgba(159,103,255,.42);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,.68),
+      0 0 12px rgba(159,103,255,.10),
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -1px 0 rgba(0,0,0,.75);
+  }
+}

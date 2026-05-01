@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Épika V 4.2 - Lector de Voz con Resaltado + Cronómetro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link id="temaCss" rel="stylesheet" href="css/temas/aurora.css">
+
+  <style>
+    #zonaSuperior .oracion-detenida {
+      background: #fff176 !important;
+      color: #111 !important;
+      box-shadow: 0 0 0 3px rgba(255, 241, 118, 0.55);
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+
+    #controlVelocidad {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    #controlVelocidad .botones-lectura-rapida {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 34px;
+      flex-wrap: wrap;
+    }
+
+    #selectorTema label {
+      color: #f5f5f5 !important;
+      font-weight: 600;
+    }
+
+    #selectorTema select,
+    #tema {
+      background: #141414 !important;
+      color: #ffffff !important;
+      border: 1px solid #d4af37 !important;
+      border-radius: 8px;
+      padding: 7px 12px;
+      outline: none;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+    }
+
+    #selectorTema select option,
+    #tema option {
+      background: #141414 !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+  <h2 class="brand">
+    <img src="temas/tex1.png" alt="Épika V4.2 - Lector de Voz con Resaltado">
+    <div id="selectorTema">
+      <label for="tema">Tema:</label>
+      <select id="tema" onchange="cambiarTema(this.value)">
+        <option value="aurora">Aurora</option>
+        <option value="brasa">Brasa</option>
+        <option value="selva">Selva Andina</option>
+        <option value="tinta">Tinta y Papel</option>
+        <option value="neon">Neón Urbano</option>
+        <option value="oro">Oro y Laurel</option>
+        <option value="cafe">Café de Pitalito</option>
+      </select>
+    </div>
+  </h2>
+  <div id="zonaSuperior" contenteditable="true">Haz clic aquí para editar texto...</div>
+  <div id="controlVelocidad">
+    <span>Velocidad de voz:</span>
+    <input type="range" id="sliderVelocidad" min="0.5" max="2" step="0.1" value="1.2" oninput="document.getElementById('velocidadValor').textContent = this.value + 'x'">
+    <span id="velocidadValor">1.2x</span>
+   <span class="botones-lectura-rapida"> <button onclick="leerTextoAlternado()" class="enviar">Leer con 2 Voces</button> <button onclick="leerTextoSeleccionado()" class="enviar">Leer texto seleccionado</button> <button onclick="detenerLectura()" class="detener">Detener Lectura</button> </span>
+  </div>
+  <textarea id="zonaInferior" rows="4" cols="50" placeholder="Escribe aquí y pulsa 'Enviar Texto' para pasar el contenido arriba..."></textarea>
+  <br>
+  <button onclick="enviarTexto()" class="enviar">Enviar Texto</button>
+  <button onclick="guardarTexto()" class="guardar">Guardar Texto</button>
+  <button onclick="borrarTextoSuperior()" class="borrar">Borrar Texto Superior</button>
+  <button onclick="leerTodoConEl()" class="enviar el">Leer TODO ฿EL</button>
+  <button onclick="leerTodoConElla()" class="enviar ella">Leer TODO ฿ELLA</button>
+  <button onclick="pausarLectura()" class="pausar">Pausar Lectura</button>
+  <button onclick="reanudarLectura()" class="reanudar">Reanudar Lectura</button>
+   <button onclick="habilitarEdicion()" class="desbloquear">Rehabilitar edición</button>
+  <div id="botonesEmociones">
+    <span style="font-weight: 500;">Seleccionar etiqueta:</span>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿ELLA_ALEGRE: ')">฿ELLA_ALEGRE</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿EL_TRISTE: ')">฿EL_TRISTE</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿ELLA_ENOJADA: ')">฿ELLA_ENOJADA</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿EL_ALEGRE: ')">฿EL_ALEGRE</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿EL_ENOJADO: ')">฿EL_ENOJADO</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿ELLA: ')">฿ELLA</button>
+    <button class="botonEmocion" onclick="activarModoEtiqueta('฿EL: ')">฿EL</button>
+  </div>
+  <div id="mensajeEtiquetaActiva"></div>
+  <img id="imagenInferior" src="temas/Barra1.png" alt="Barra Decorativa">
+  <div id="cronometroVentana">
+    <div class="fila">
+      ⏱ <span id="cronometroTiempo">00:00</span>
+      <button onclick="pausarCronometro()" class="pausar">Pausar</button>
+      <button onclick="reanudarCronometro()" class="reanudar">Reanudar</button>
+      <button onclick="detenerCronometro()" class="detener">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    let etiquetaActiva = null;
+    let insertando = false;
+    let voces = [];
+    let vozElla = null;
+    let vozEl = null;
+    let isPaused = false;
+    let lecturaActiva = false;
+    let backupTextoPlano = "";
+    let backupContentEditable = true;
+    let oraciones = [];
+    let mapaPalabras = [];
+    let ultimaOracionResaltada = -1;
+    let lecturaDetenidaConResaltado = false;
+    let oracionDetenidaIdx = -1;
+    let lecturaSoloSeleccion = false;
+    let lecturaSeleccionInicioPlano = -1;
+    let cronometroInterval = null;
+    let segundosTotales = 0;
+
+    const TEMAS = {
+      aurora: { nombre: 'Aurora', css: 'css/temas/aurora.css', logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      brasa:  { nombre: 'Brasa', css: 'css/temas/brasa.css',  logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      selva:  { nombre: 'Selva Andina', css: 'css/temas/selva.css', logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      tinta:  { nombre: 'Tinta y Papel', css: 'css/temas/tinta.css', logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      neon:   { nombre: 'Neón Urbano', css: 'css/temas/neon.css',  logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      oro:    { nombre: 'Oro y Laurel', css: 'css/temas/oro.css',   logo: 'temas/tex1.png', barra: 'temas/Barra1.png' },
+      cafe:   { nombre: 'Café de Pitalito', css: 'css/temas/cafe.css', logo: 'temas/tex1.png', barra: 'temas/Barra1.png' }
+    };
+
+    function cambiarTema(tema) {
+      const config = TEMAS[tema] || TEMAS.aurora;
+      document.body.className = tema;
+      localStorage.setItem('temaSeleccionado', tema);
+      const temaCss = document.getElementById('temaCss');
+      if (temaCss) temaCss.href = config.css;
+      const imgSuperior = document.querySelector('.brand img');
+      const imgInferior = document.getElementById('imagenInferior');
+      if (imgSuperior) imgSuperior.src = config.logo;
+      if (imgInferior) imgInferior.src = config.barra;
+    }
+
+    window.addEventListener('load', () => {
+      console.log("Página cargada, aplicando tema inicial");
+      const temaGuardado = localStorage.getItem('temaSeleccionado') || 'aurora';
+      document.getElementById('tema').value = temaGuardado;
+      cambiarTema(temaGuardado);
+    });
+
+    function actualizarCronometroUI() {
+      const min = String(Math.floor(segundosTotales / 60)).padStart(2, '0');
+      const seg = String(segundosTotales % 60).padStart(2, '0');
+      const span = document.getElementById("cronometroTiempo");
+      if (span) span.textContent = `${min}:${seg}`;
+    }
+
+    function iniciarCronometro() {
+      detenerCronometro();
+      segundosTotales = 0;
+      actualizarCronometroUI();
+      const box = document.getElementById("cronometroVentana");
+      if (box) box.style.display = "block";
+      cronometroInterval = setInterval(() => {
+        segundosTotales++;
+        actualizarCronometroUI();
+      }, 1000);
+    }
+
+    function pausarCronometro() {
+      if (cronometroInterval) {
+        clearInterval(cronometroInterval);
+        cronometroInterval = null;
+      }
+    }
+
+    function reanudarCronometro() {
+      if (!cronometroInterval) {
+        cronometroInterval = setInterval(() => {
+          segundosTotales++;
+          actualizarCronometroUI();
+        }, 1000);
+      }
+    }
+
+    function detenerCronometro() {
+      if (cronometroInterval) {
+        clearInterval(cronometroInterval);
+        cronometroInterval = null;
+      }
+      const box = document.getElementById("cronometroVentana");
+      if (box) box.style.display = "none";
+    }
+
+    function cargarVoces() {
+      if (typeof speechSynthesis === "undefined") return;
+      voces = speechSynthesis.getVoices();
+      vozElla = voces.find(v => v.name && /Paloma/i.test(v.name)) ||
+        voces.find(v => v.lang && v.lang.toLowerCase().startsWith('es') && /female|mujer|fem/i.test((v.name||"") + (v.voiceURI||""))) ||
+        voces.find(v => v.lang && v.lang.toLowerCase().startsWith('es')) ||
+        voces[0] || null;
+      vozEl = voces.find(v => v.name && /Federico/i.test(v.name)) ||
+        voces.find(v => v.lang && v.lang.toLowerCase().startsWith('es') && /male|masc|hombre/i.test((v.name||"") + (v.voiceURI||""))) ||
+        voces.find(v => v.lang && v.lang.toLowerCase().startsWith('es')) ||
+        voces[1] || voces[0] || null;
+    }
+
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.onvoiceschanged = cargarVoces;
+      window.addEventListener('load', () => setTimeout(cargarVoces, 300));
+    }
+
+    function activarModoEtiqueta(etiqueta) {
+      etiquetaActiva = etiqueta;
+      insertando = true;
+      document.body.style.cursor = 'crosshair';
+      document.getElementById('mensajeEtiquetaActiva').textContent = `✅ Modo de inserción activo: "${etiquetaActiva}"`;
+    }
+
+    function desactivarModoEtiqueta() {
+      etiquetaActiva = null;
+      insertando = false;
+      document.body.style.cursor = 'default';
+      document.getElementById('mensajeEtiquetaActiva').textContent = '';
+    }
+
+    document.getElementById("zonaSuperior").addEventListener("click", function () {
+      if (lecturaDetenidaConResaltado) limpiarResaltadoDetenido();
+      if (!lecturaActiva) this.contentEditable = "true";
+      if (!insertando || !etiquetaActiva || lecturaActiva) return;
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const range = selection.getRangeAt(0);
+      const nodo = document.createTextNode(etiquetaActiva);
+      range.insertNode(nodo);
+      range.setStartAfter(nodo);
+      range.setEndAfter(nodo);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') desactivarModoEtiqueta();
+    });
+
+    document.addEventListener('click', e => {
+      if (!document.getElementById("zonaSuperior").contains(e.target) && insertando) desactivarModoEtiqueta();
+    }, true);
+
+    const zonaSuperior = document.getElementById('zonaSuperior');
+    zonaSuperior.addEventListener('keyup', (e) => {
+      if (lecturaActiva) return;
+      if (e.key === '.' || e.key === '!' || e.key === '?') {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        const salto = document.createTextNode('\n');
+        range.insertNode(salto);
+        range.setStartAfter(salto);
+        range.setEndAfter(salto);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+
+    zonaSuperior.addEventListener('input', (e) => {
+      if (lecturaDetenidaConResaltado) limpiarResaltadoDetenido();
+      if (lecturaActiva) return;
+      if (e.inputType === 'insertFromPaste') {
+        const txt = zonaSuperior.innerText;
+        const normalizado = formatearSaltosFinDeOracion(txt);
+        if (normalizado !== txt) {
+          zonaSuperior.innerText = normalizado;
+          colocarCursorAlFinal(zonaSuperior);
+        }
+      }
+    });
+
+    function colocarCursorAlFinal(el) {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function formatearSaltosFinDeOracion(texto) {
+      let t = texto.replace(/([.!?])(?=\s|$)/g, '$1\n');
+      t = t.replace(/\n{3,}/g, '\n\n');
+      if (!t.endsWith('\n')) t += '\n';
+      return t;
+    }
+
+    function enviarTexto() {
+      const zonaInf = document.getElementById("zonaInferior");
+      let texto = (zonaInf.value || "").trim();
+      if (!texto) {
+        alert("Escribe texto en el cuadro inferior antes de enviar.");
+        return;
+      }
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+      finalizarRenderLectura();
+      let oraciones = partirEnOraciones(texto);
+      let textoConEtiquetas = "";
+      let usarEl = true;
+      oraciones.forEach(oracion => {
+        oracion = oracion.trim();
+        if (oracion) {
+          textoConEtiquetas += (usarEl ? "฿EL: " : "฿ELLA: ") + oracion + "\n";
+          usarEl = !usarEl;
+        }
+      });
+      textoConEtiquetas = formatearSaltosFinDeOracion(textoConEtiquetas);
+      const zona = document.getElementById("zonaSuperior");
+      zona.innerText = textoConEtiquetas;
+      zona.contentEditable = "true";
+      zonaInf.value = '';
+      zona.focus();
+      colocarCursorAlFinal(zona);
+    }
+
+    function guardarTexto() {
+      const texto = document.getElementById("zonaSuperior").innerText;
+      const blob = new Blob([texto], { type: "text/plain" });
+      const enlace = document.createElement("a");
+      enlace.download = "texto_guardado.txt";
+      enlace.href = URL.createObjectURL(blob);
+      document.body.appendChild(enlace);
+      enlace.click();
+      document.body.removeChild(enlace);
+      URL.revokeObjectURL(enlace.href);
+    }
+
+    function borrarTextoSuperior() {
+      if (lecturaActiva) return;
+      document.getElementById("zonaSuperior").innerText = '';
+    }
+
+    function comenzarRenderLectura(textoPlano) {
+      const zona = document.getElementById("zonaSuperior");
+      lecturaActiva = true;
+      backupTextoPlano = zona.innerText;
+      backupContentEditable = zona.isContentEditable;
+      zona.contentEditable = "false";
+      const bloques = textoPlano.split(/\n\s*\n/);
+      oraciones = [];
+      mapaPalabras = [];
+      const html = bloques.map(b => {
+        const lista = partirEnOraciones(b.trim());
+        lista.forEach(o => oraciones.push(o));
+        return lista.map((o, idx) => {
+          let etiqueta = '';
+          let texto = o;
+          if (/^฿EL:/i.test(o)) {
+            etiqueta = '<span class="etiqueta">฿EL:</span> ';
+            texto = o.replace(/^฿EL:\s*/i, '');
+          } else if (/^฿ELLA:/i.test(o)) {
+            etiqueta = '<span class="etiqueta">฿ELLA:</span> ';
+            texto = o.replace(/^฿ELLA:\s*/i, '');
+          }
+          const seguro = escapeHTML(texto);
+          return `${etiqueta}<span class="oracion" data-idx="${oraciones.length - lista.length + idx}">${seguro}</span>`;
+        }).join(' ') + '<br><br>';
+      }).join('');
+      zona.innerHTML = html;
+      ultimaOracionResaltada = -1;
+    }
+
+    function finalizarRenderLectura() {
+      const zona = document.getElementById("zonaSuperior");
+      if (!lecturaActiva) {
+        zona.contentEditable = "true";
+        return;
+      }
+      zona.innerText = backupTextoPlano;
+      zona.contentEditable = backupContentEditable ? "true" : "true";
+      lecturaActiva = false;
+      lecturaDetenidaConResaltado = false;
+      oracionDetenidaIdx = -1;
+      lecturaSoloSeleccion = false;
+      lecturaSeleccionInicioPlano = -1;
+      oraciones = [];
+      mapaPalabras = [];
+      ultimaOracionResaltada = -1;
+    }
+
+    function partirEnOraciones(texto) {
+      if (!texto) return [];
+      const bloques = texto.split(/\n+/).filter(b => b.trim());
+      const oraciones = [];
+      const etiquetaRegex = /^(฿EL: |฿ELLA: )/i;
+      bloques.forEach(bloque => {
+        let oracionActual = '';
+        let ultimaEtiqueta = '';
+        const palabras = bloque.split(/\s+/).filter(p => p);
+        for (let i = 0; i < palabras.length; i++) {
+          const palabra = palabras[i];
+          if (etiquetaRegex.test(palabra)) {
+            if (oracionActual.trim()) {
+              oraciones.push(ultimaEtiqueta + oracionActual.trim());
+            }
+            ultimaEtiqueta = palabra.match(etiquetaRegex)[0];
+            oracionActual = palabra.replace(etiquetaRegex, '');
+          } else {
+            oracionActual += (oracionActual ? ' ' : '') + palabra;
+            if (/[.!?]$/.test(palabra)) {
+              oraciones.push(ultimaEtiqueta + oracionActual.trim());
+              oracionActual = '';
+              ultimaEtiqueta = '';
+            }
+          }
+        }
+        if (oracionActual.trim()) {
+          oraciones.push(ultimaEtiqueta + oracionActual.trim());
+        }
+      });
+      return oraciones.filter(o => o.trim());
+    }
+
+    function escapeHTML(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    function limpiarResaltados() {
+      document.querySelectorAll("#zonaSuperior .oracion").forEach(el => el.classList.remove("oracion-activa"));
+      document.querySelectorAll("#zonaSuperior .oracion .pal").forEach(el => el.classList.remove("palabra-activa"));
+    }
+
+    function limpiarResaltadoDetenido() {
+      document.querySelectorAll("#zonaSuperior .oracion-detenida").forEach(el => el.classList.remove("oracion-detenida"));
+      lecturaDetenidaConResaltado = false;
+      oracionDetenidaIdx = -1;
+    }
+
+    function obtenerInicioSeleccionEnTextoPlano(el) {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return -1;
+      const range = sel.getRangeAt(0);
+      const preRange = range.cloneRange();
+      preRange.selectNodeContents(el);
+      preRange.setEnd(range.startContainer, range.startOffset);
+      return preRange.toString().length;
+    }
+
+    function textoPlanoAHTML(texto) {
+      return escapeHTML(texto).replace(/\n/g, "<br>");
+    }
+
+    function quitarEtiquetaVoz(texto) {
+      return (texto || "").replace(/^฿ELLA:\s*/i, "").replace(/^฿EL:\s*/i, "").trim();
+    }
+
+    function buscarDesdeIndice(textoCompleto, buscado, desde) {
+      if (!buscado) return -1;
+      const inicio = Math.max(0, typeof desde === "number" ? desde : 0);
+      let pos = textoCompleto.indexOf(buscado, inicio);
+      if (pos >= 0) return pos;
+      pos = textoCompleto.indexOf(buscado);
+      return pos;
+    }
+
+    function restaurarTextoCompletoConResaltado(oracionTexto, desdeIndice) {
+      const zona = document.getElementById("zonaSuperior");
+      const textoCompleto = backupTextoPlano || zona.innerText || "";
+      const candidatoCompleto = (oracionTexto || "").trim();
+      const candidatoSinEtiqueta = quitarEtiquetaVoz(candidatoCompleto);
+
+      let buscado = candidatoCompleto;
+      let pos = buscarDesdeIndice(textoCompleto, buscado, desdeIndice);
+
+      if (pos < 0 && candidatoSinEtiqueta && candidatoSinEtiqueta !== candidatoCompleto) {
+        buscado = candidatoSinEtiqueta;
+        pos = buscarDesdeIndice(textoCompleto, buscado, desdeIndice);
+      }
+
+      if (pos < 0 || !buscado) {
+        zona.innerText = textoCompleto;
+        zona.contentEditable = "true";
+        lecturaActiva = false;
+        isPaused = false;
+        lecturaDetenidaConResaltado = false;
+        oracionDetenidaIdx = -1;
+        lecturaSoloSeleccion = false;
+        lecturaSeleccionInicioPlano = -1;
+        return;
+      }
+
+      const antes = textoCompleto.slice(0, pos);
+      const medio = textoCompleto.slice(pos, pos + buscado.length);
+      const despues = textoCompleto.slice(pos + buscado.length);
+
+      zona.innerHTML =
+        textoPlanoAHTML(antes) +
+        '<span class="oracion-detenida">' + textoPlanoAHTML(medio) + '</span>' +
+        textoPlanoAHTML(despues);
+
+      const marcado = zona.querySelector(".oracion-detenida");
+      if (marcado) marcado.scrollIntoView({ block: "center", behavior: "smooth" });
+
+      lecturaActiva = false;
+      isPaused = false;
+      lecturaDetenidaConResaltado = true;
+      oracionDetenidaIdx = -1;
+      lecturaSoloSeleccion = false;
+      lecturaSeleccionInicioPlano = -1;
+      zona.contentEditable = "true";
+    }
+
+    function mantenerTextoDondeSeDetuvo() {
+      const zona = document.getElementById("zonaSuperior");
+      const idx = ultimaOracionResaltada >= 0 ? ultimaOracionResaltada : 0;
+      limpiarResaltados();
+      document.querySelectorAll("#zonaSuperior .oracion-detenida").forEach(el => el.classList.remove("oracion-detenida"));
+      const actual = document.querySelector(`#zonaSuperior .oracion[data-idx="${idx}"]`);
+      if (actual) {
+        actual.classList.add("oracion-detenida");
+        actual.scrollIntoView({ block: "center", behavior: "smooth" });
+        oracionDetenidaIdx = idx;
+        lecturaDetenidaConResaltado = true;
+      }
+      lecturaActiva = false;
+      isPaused = false;
+      zona.contentEditable = "true";
+    }
+
+    function resaltarOracion(i) {
+      if (i === ultimaOracionResaltada) return;
+      limpiarResaltados();
+      const el = document.querySelector(`#zonaSuperior .oracion[data-idx="${i}"]`);
+      if (!el) return;
+      el.classList.add("oracion-activa");
+      el.scrollIntoView({ block: "center", behavior: "smooth" });
+      ultimaOracionResaltada = i;
+    }
+
+    function prepararPalabras(i) {
+      const el = document.querySelector(`#zonaSuperior .oracion[data-idx="${i}"]`);
+      if (!el) return;
+      const texto = el.textContent;
+      const tokens = texto.match(/\S+|\s+/g) || [];
+      mapaPalabras[i] = [];
+      let html = "";
+      let w = 0;
+      for (const t of tokens) {
+        if (/^\s+$/.test(t)) {
+          html += t;
+        } else {
+          const safe = escapeHTML(t);
+          html += `<span class="pal" data-w="${w}">${safe}</span>`;
+          mapaPalabras[i].push(t);
+          w++;
+        }
+      }
+      el.innerHTML = html;
+    }
+
+    function resaltarPalabra(iOracion, iPalabra) {
+      const orEl = document.querySelector(`#zonaSuperior .oracion[data-idx="${iOracion}"]`);
+      if (!orEl) return;
+      orEl.querySelectorAll(".pal").forEach(el => el.classList.remove("palabra-activa"));
+      const pal = orEl.querySelector(`.pal[data-w="${iPalabra}"]`);
+      if (pal) pal.classList.add("palabra-activa");
+    }
+
+    function crearUtterance(texto, voz, rate, iOracion) {
+      const u = new SpeechSynthesisUtterance(texto);
+      u.voice = voz;
+      u.rate = rate;
+      u.onstart = () => {
+        resaltarOracion(iOracion);
+        prepararPalabras(iOracion);
+      };
+      u.onboundary = (ev) => {
+        if (typeof ev.charIndex === "number") {
+          const parcial = texto.slice(0, ev.charIndex);
+          const idx = (parcial.match(/\S+/g) || []).length - 1;
+          if (idx >= 0) resaltarPalabra(iOracion, idx);
+        }
+      };
+      return u;
+    }
+
+    function pausarLectura() {
+      if (typeof speechSynthesis === "undefined") return;
+      if (speechSynthesis.speaking && !speechSynthesis.paused) {
+        speechSynthesis.pause();
+        isPaused = true;
+        pausarCronometro();
+      }
+    }
+
+    function reanudarLectura() {
+      if (typeof speechSynthesis === "undefined") return;
+      if (speechSynthesis.paused && isPaused) {
+        speechSynthesis.resume();
+        isPaused = false;
+        reanudarCronometro();
+      }
+    }
+
+    function detenerLectura() {
+      const textoDetenido = (ultimaOracionResaltada >= 0 && oraciones[ultimaOracionResaltada])
+        ? oraciones[ultimaOracionResaltada]
+        : "";
+
+      if (typeof speechSynthesis !== "undefined") {
+        try { speechSynthesis.cancel(); } catch(e) {}
+      }
+      detenerCronometro();
+
+      setTimeout(() => {
+        if (lecturaActiva) {
+          if (lecturaSoloSeleccion) {
+            restaurarTextoCompletoConResaltado(textoDetenido, lecturaSeleccionInicioPlano);
+          } else {
+            mantenerTextoDondeSeDetuvo();
+          }
+        } else {
+          habilitarEdicion();
+        }
+      }, 0);
+    }
+
+    function leerTodoConEl() {
+      if (!vozEl) cargarVoces();
+      const texto = document.getElementById("zonaSuperior").innerText;
+      if (!texto.trim()) {
+        alert("Por favor, ingresa texto en la zona superior para leer.");
+        return;
+      }
+      const velocidad = parseFloat(document.getElementById("sliderVelocidad").value);
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+      lecturaSoloSeleccion = false;
+      lecturaSeleccionInicioPlano = -1;
+      finalizarRenderLectura();
+      comenzarRenderLectura(texto);
+      iniciarCronometro();
+      for (let i = 0; i < oraciones.length; i++) {
+        const utt = crearUtterance(oraciones[i], vozEl, velocidad, i);
+        if (i === oraciones.length - 1) {
+          const fin = utt.onend;
+          utt.onend = () => {
+            if (fin) fin();
+            finalizarRenderLectura();
+            habilitarEdicion();
+            detenerCronometro();
+          };
+        }
+        speechSynthesis.speak(utt);
+      }
+    }
+
+    function leerTodoConElla() {
+      if (!vozElla) cargarVoces();
+      const texto = document.getElementById("zonaSuperior").innerText;
+      if (!texto.trim()) {
+        alert("Por favor, ingresa texto en la zona superior para leer.");
+        return;
+      }
+      const velocidad = parseFloat(document.getElementById("sliderVelocidad").value);
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+      lecturaSoloSeleccion = false;
+      lecturaSeleccionInicioPlano = -1;
+      finalizarRenderLectura();
+      comenzarRenderLectura(texto);
+      iniciarCronometro();
+      for (let i = 0; i < oraciones.length; i++) {
+        const utt = crearUtterance(oraciones[i], vozElla, velocidad, i);
+        if (i === oraciones.length - 1) {
+          const fin = utt.onend;
+          utt.onend = () => {
+            if (fin) fin();
+            finalizarRenderLectura();
+            habilitarEdicion();
+            detenerCronometro();
+          };
+        }
+        speechSynthesis.speak(utt);
+      }
+    }
+
+    function leerTextoAlternado() {
+      if (!vozElla || !vozEl) cargarVoces();
+      const texto = document.getElementById("zonaSuperior").innerText;
+      if (!texto.trim()) {
+        alert("Por favor, ingresa texto en la zona superior para leer.");
+        return;
+      }
+      const velocidad = parseFloat(document.getElementById("sliderVelocidad").value);
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+      lecturaSoloSeleccion = false;
+      lecturaSeleccionInicioPlano = -1;
+      finalizarRenderLectura();
+      comenzarRenderLectura(texto);
+      iniciarCronometro();
+      let usarElla = true;
+      for (let i = 0; i < oraciones.length; i++) {
+        let t = oraciones[i];
+        let voz = usarElla ? vozElla : vozEl;
+        if (/^฿EL:/i.test(t)) {
+          voz = vozEl;
+          t = t.replace(/^฿EL:\s*/i, '');
+        } else if (/^฿ELLA:/i.test(t)) {
+          voz = vozElla;
+          t = t.replace(/^฿ELLA:\s*/i, '');
+        } else {
+          usarElla = !usarElla;
+        }
+        const utt = crearUtterance(t, voz, velocidad, i);
+        if (i === oraciones.length - 1) {
+          const fin = utt.onend;
+          utt.onend = () => {
+            if (fin) fin();
+            finalizarRenderLectura();
+            habilitarEdicion();
+            detenerCronometro();
+          };
+        }
+        speechSynthesis.speak(utt);
+      }
+    }
+
+    function leerTextoSeleccionado() {
+      const zona = document.getElementById("zonaSuperior");
+      const sel = window.getSelection().toString().trim();
+      if (!sel) {
+        alert("Por favor, selecciona texto dentro de la zona superior.");
+        return;
+      }
+      const inicioSeleccion = obtenerInicioSeleccionEnTextoPlano(zona);
+      if (!vozElla || !vozEl) cargarVoces();
+      const velocidad = parseFloat(document.getElementById("sliderVelocidad").value);
+      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+      lecturaSoloSeleccion = true;
+      lecturaSeleccionInicioPlano = inicioSeleccion;
+      finalizarRenderLectura();
+      lecturaSoloSeleccion = true;
+      lecturaSeleccionInicioPlano = inicioSeleccion;
+      comenzarRenderLectura(sel);
+      iniciarCronometro();
+      for (let i = 0; i < oraciones.length; i++) {
+        let t = oraciones[i];
+        let voz = vozElla || voces[0] || null;
+        if (/^฿EL:/i.test(t)) {
+          voz = vozEl || voz;
+          t = t.replace(/^฿EL:\s*/i, '');
+        } else if (/^฿ELLA:/i.test(t)) {
+          voz = vozElla || voz;
+          t = t.replace(/^฿ELLA:\s*/i, '');
+        }
+        const utt = crearUtterance(t, voz, velocidad, i);
+        if (i === oraciones.length - 1) {
+          const fin = utt.onend;
+          utt.onend = () => {
+            if (fin) fin();
+            finalizarRenderLectura();
+            habilitarEdicion();
+            detenerCronometro();
+          };
+        }
+        speechSynthesis.speak(utt);
+      }
+    }
+
+    function habilitarEdicion() {
+      const zona = document.getElementById("zonaSuperior");
+      lecturaActiva = false;
+      zona.contentEditable = "true";
+      zona.focus();
+      colocarCursorAlFinal(zona);
+    }
+
+    window.addEventListener("blur", () => {
+      if (!lecturaActiva) document.getElementById("zonaSuperior").contentEditable = "true";
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.addEventListener('mousedown', () => button.classList.add('clicked'));
+        button.addEventListener('mouseup', () => button.classList.remove('clicked'));
+        button.addEventListener('mouseout', () => button.classList.remove('clicked'));
+      });
+    });
+
+    document.addEventListener('pointermove', e => {
+      const t = e.target;
+      if (!(t instanceof HTMLElement) || t.tagName.toLowerCase() !== 'button') return;
+      const r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      t.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  </script>
+</body>
+</html>

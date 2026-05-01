@@ -1,0 +1,341 @@
+/* temas.css */
+
+/* Estilos base comunes a todos los temas */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.brand {
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand img {
+  height: 56px;
+  max-height: 8vh;
+  width: auto;
+  display: block;
+  transition: filter 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .brand img { height: 44px; }
+}
+
+#selectorTema {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+#selectorTema select {
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#selectorTema select:hover {
+  background: var(--boton-emocion-hover);
+}
+
+#zonaSuperior {
+  border: 3px solid var(--accent);
+  border-radius: var(--radius);
+  height: 500px;
+  padding: 15px;
+  margin-bottom: 20px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  cursor: text;
+  background-color: var(--card);
+  box-shadow: var(--elev-2);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#zonaSuperior:focus {
+  outline: 3px solid var(--focus);
+}
+
+#zonaSuperior::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+#zonaSuperior::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+#zonaSuperior::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+#zonaSuperior::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+#zonaInferior {
+  width: 95%;
+  border: 2px dashed var(--accent-2);
+  border-radius: var(--radius);
+  margin: 20px auto;
+  padding: 15px;
+  background-color: var(--card);
+  box-shadow: var(--elev-1);
+  resize: vertical;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--fg);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#zonaInferior:focus {
+  outline: 3px solid var(--focus);
+  border-color: var(--accent);
+}
+
+#controlVelocidad {
+  margin: 15px 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+}
+
+#sliderVelocidad {
+  -webkit-appearance: none;
+  appearance: none;
+  width: clamp(240px, 40vw, 520px);
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 999px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+}
+
+#sliderVelocidad::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--card);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  box-shadow: var(--elev-1);
+  transition: transform var(--speed) ease, background-color 0.3s ease;
+}
+
+#sliderVelocidad::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  background: var(--focus);
+}
+
+#sliderVelocidad::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--card);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  box-shadow: var(--elev-1);
+  transition: transform var(--speed) ease, background-color 0.3s ease;
+}
+
+#sliderVelocidad::-moz-range-thumb:hover {
+  transform: scale(1.08);
+  background: var(--focus);
+}
+
+button {
+  border-radius: var(--radius);
+  border: none;
+  padding: 10px 16px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  box-shadow: var(--elev-1);
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease, filter var(--speed) ease, background-color var(--speed) ease;
+  position: relative;
+  will-change: transform, box-shadow, filter;
+  cursor: pointer;
+  margin: 5px;
+  color: var(--button-text);
+  background: var(--button-bg, var(--accent));
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-2);
+  filter: brightness(1.1);
+}
+
+button:active {
+  transform: translateY(0) scale(.98);
+  box-shadow: var(--elev-1);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120px 120px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.3), transparent 60%);
+  opacity: 0;
+  transition: opacity var(--speed) ease;
+  pointer-events: none;
+}
+
+button:hover::after {
+  opacity: .8;
+}
+
+/* Botones específicos */
+.enviar { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.guardar { background: var(--success); }
+.borrar { background: var(--danger); }
+.pausar { background: var(--warning); color: var(--button-text-alt); }
+.reanudar { background: var(--info); }
+.detener { background: var(--muted); }
+.desbloquear { background: var(--violet); }
+
+/* Botones de EL y ELLA */
+button[onclick="leerTodoConElla()"] {
+  background: var(--ella-bg);
+  color: var(--button-text);
+}
+
+button[onclick="leerTodoConEl()"] {
+  background: var(--el-bg);
+  color: var(--button-text);
+}
+
+.botonEmocion {
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--muted);
+  background: var(--boton-emocion-bg);
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease, background-color var(--speed) ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  cursor: pointer;
+  color: var(--fg);
+}
+
+.botonEmocion:hover {
+  background: var(--boton-emocion-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-1);
+}
+
+.botonEmocion:active {
+  transform: translateY(0) scale(.98);
+}
+
+/* Botones de emociones específicos para EL y ELLA */
+.botonEmocion[onclick*="ELLA"] {
+  background: var(--ella-emocion-bg);
+  color: var(--button-text);
+}
+
+.botonEmocion[onclick*="EL"] {
+  background: var(--el-emocion-bg);
+  color: var(--button-text);
+}
+
+#mensajeEtiquetaActiva {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-top: 10px;
+}
+
+#imagenInferior {
+  width: 95%;
+  display: block;
+  margin: 20px auto;
+  transition: filter 0.3s ease;
+}
+
+.oracion-activa {
+  background: var(--oracion-activa-bg);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 2px var(--oracion-activa-border);
+  padding: 2px 4px;
+  display: inline-block;
+}
+
+.palabra-activa {
+  background: var(--palabra-activa-bg);
+  border-radius: 6px;
+  padding: 0 2px;
+}
+
+#cronometroVentana {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--cronometro-bg);
+  color: var(--cronometro-text);
+  font-size: 18px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  box-shadow: var(--elev-3);
+  display: none;
+  z-index: 9999;
+  user-select: none;
+}
+
+#cronometroVentana .fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#cronometroVentana button {
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: calc(var(--radius) - 4px);
+  box-shadow: none;
+  background: var(--cronometro-button-bg);
+  color: var(--cronometro-button-text);
+}
+
+#cronometroVentana button:hover {
+  filter: brightness(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* PROTECCIÓN ESTRUCTURAL */
+#cronometroVentana{position:fixed;bottom:20px;right:20px;display:none;width:auto;min-width:max-content;max-width:calc(100vw - 40px);}
+#cronometroVentana .fila{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.brand img,#imagenInferior{content:normal!important;}
+#imagenInferior{width:95%;display:block;margin:20px auto;}

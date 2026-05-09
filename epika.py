@@ -11,7 +11,7 @@ import socket
 import http.server
 import socketserver
 
-VERSION_LOCAL = "4.4"  # Temporal: igualar con GitHub hasta subir el update
+VERSION_LOCAL = "4.4"
 REPO = "https://raw.githubusercontent.com/AVEFENIX2023/epika/main/"
 ARCHIVOS = [
     "epika_v4.html",

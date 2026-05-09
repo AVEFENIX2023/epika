@@ -15,6 +15,7 @@ VERSION_LOCAL = "4.4"
 REPO = "https://raw.githubusercontent.com/AVEFENIX2023/epika/main/"
 ARCHIVOS = [
     "epika_v4.html",
+    "manifest.json",
     "icono.ico",
     "css/base.css",
     "css/temas/aurora.css",
@@ -84,6 +85,19 @@ def encontrar_puerto_libre():
 
 class _SilentHandler(http.server.SimpleHTTPRequestHandler):
     """Servidor HTTP que sirve desde el directorio de Epika sin logs."""
+    # Asegurar MIME types correctos (Windows no siempre los tiene)
+    extensions_map = {
+        '':      'application/octet-stream',
+        '.html': 'text/html',
+        '.css':  'text/css',
+        '.js':   'application/javascript',
+        '.ico':  'image/x-icon',
+        '.png':  'image/png',
+        '.jpg':  'image/jpeg',
+        '.svg':  'image/svg+xml',
+        '.txt':  'text/plain',
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=destino, **kwargs)
 
@@ -111,25 +125,41 @@ def abrir_edge(puerto):
     edge = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
     if not os.path.exists(edge):
         edge = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+    subprocess.Popen([edge, f"--app={url}"])
 
-    # SOLUCION PROBLEMA 2 (barra de tareas): lanzar via .lnk con icono
-    # Windows muestra el icono del acceso directo en la barra de tareas.
+
+def inyectar_icono_en_ventana():
+    """Espera a que la ventana Epika abra y le inyecta el icono personalizado."""
     icono_path = os.path.join(destino, "icono.ico")
-    lnk_path = os.path.join(os.environ.get("TEMP", destino), "Epika.lnk")
+    if not os.path.exists(icono_path):
+        return
     try:
-        import win32com.client
-        shell = win32com.client.Dispatch("WScript.Shell")
-        acceso = shell.CreateShortCut(lnk_path)
-        acceso.TargetPath = edge
-        acceso.Arguments = f"--app={url}"
-        acceso.WorkingDirectory = destino
-        if os.path.exists(icono_path):
-            acceso.IconLocation = icono_path
-        acceso.save()
-        os.startfile(lnk_path)
+        import win32gui
+        import ctypes
+        WM_SETICON   = 0x0080
+        ICON_SMALL   = 0
+        ICON_BIG     = 1
+        IMAGE_ICON   = 1
+        LR_LOADFROMFILE = 0x0010
+        # Esperar hasta que la ventana aparezca (max 10 seg)
+        hwnd = 0
+        for _ in range(20):
+            hwnd = _buscar_ventana_epika()
+            if hwnd:
+                break
+            time.sleep(0.5)
+        if not hwnd:
+            return
+        # Cargar icono en dos tamaños
+        hicon_small = ctypes.windll.user32.LoadImageW(
+            None, icono_path, IMAGE_ICON, 16, 16, LR_LOADFROMFILE)
+        hicon_big = ctypes.windll.user32.LoadImageW(
+            None, icono_path, IMAGE_ICON, 32, 32, LR_LOADFROMFILE)
+        # Inyectar en la ventana
+        win32gui.SendMessage(hwnd, WM_SETICON, ICON_SMALL, hicon_small)
+        win32gui.SendMessage(hwnd, WM_SETICON, ICON_BIG,   hicon_big)
     except Exception:
-        # Fallback si win32com no esta disponible
-        subprocess.Popen([edge, f"--app={url}"])
+        pass
 
 
 def esperar_cierre_epika():
@@ -187,6 +217,11 @@ def descargar_archivos(progress_callback, status_callback):
         base = sys._MEIPASS
     else:
         base = os.path.dirname(os.path.abspath(__file__))
+    # Copiar icono.ico al destino (necesario para favicon via HTTP)
+    ico_src = os.path.join(base, "icono.ico")
+    ico_dst = os.path.join(destino, "icono.ico")
+    if os.path.exists(ico_src) and not os.path.exists(ico_dst):
+        shutil.copy2(ico_src, ico_dst)
     temas_src = os.path.join(base, "temas")
     temas_dst = os.path.join(destino, "temas")
     if os.path.exists(temas_src):
@@ -234,11 +269,21 @@ def main():
     html_existe = os.path.exists(os.path.join(destino, "epika_v4.html"))
 
     if not hay_actualizacion and html_existe:
-        # Lanzar directamente con servidor HTTP (Problema 2 resuelto)
+        # Garantizar que icono.ico este en destino para el favicon HTTP
+        if getattr(sys, "frozen", False):
+            _base = sys._MEIPASS
+        else:
+            _base = os.path.dirname(os.path.abspath(__file__))
+        _ico_src = os.path.join(_base, "icono.ico")
+        _ico_dst = os.path.join(destino, "icono.ico")
+        if os.path.exists(_ico_src) and not os.path.exists(_ico_dst):
+            shutil.copy2(_ico_src, _ico_dst)
+        # Lanzar directamente con servidor HTTP
         puerto = encontrar_puerto_libre()
         threading.Thread(target=iniciar_servidor_http, args=(puerto,), daemon=True).start()
         time.sleep(0.4)
         abrir_edge(puerto)
+        threading.Thread(target=inyectar_icono_en_ventana, daemon=True).start()
         esperar_cierre_epika()
         return
 
@@ -308,6 +353,7 @@ def main():
     threading.Thread(target=iniciar_servidor_http, args=(puerto,), daemon=True).start()
     time.sleep(0.4)
     abrir_edge(puerto)
+    threading.Thread(target=inyectar_icono_en_ventana, daemon=True).start()
 
     if hay_actualizacion and novedades_resultado and novedades_resultado[0]:
         time.sleep(2)

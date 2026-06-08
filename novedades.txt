@@ -1,4 +1,11 @@
-✨ Versión 4.4
-- CORRECCIÓN: Múltiples instancias — ahora detecta la ventana abierta con win32gui y la trae al frente
-- CORRECCIÓN: Icono en barra de tareas — servidor HTTP local en lugar de file:/// (Edge ahora muestra el favicon correctamente)
-- Versión unificada en todos los archivos del proyecto
+✨ Versión 4.5
+
+Épika V4.5 — Novedades respecto a la versión anterior
+Mini menú de etiquetas
+Al parar el puntero sobre una etiqueta ฿EL: o ฿ELLA: en la zona de edición aparece un pequeño menú flotante con dos opciones: Borrar etiqueta (la elimina del texto) o Reemplazar (la intercambia por la etiqueta contraria). Esto evita tener que buscar y editar la etiqueta a mano.
+Botón "Continuar Lectura"
+Se agregó un botón junto a Detener Lectura. Al detener la lectura, la oración donde se paró queda resaltada; haciendo clic en cualquier oración del texto y luego pulsando Continuar Lectura, la lectura retoma exactamente desde ese punto. Si no se selecciona ninguna oración, continúa desde donde se detuvo automáticamente.
+Botones superiores
+En la esquina superior derecha aparecen dos nuevos botones permanentes: ℹ Acerca de, que muestra una ventana con la descripción del programa y sus funciones, y ✕ Cerrar, que detiene la voz y cierra la aplicación.
+
+Todo lo anterior de la v4.4 permanece intacto y sin modificaciones.

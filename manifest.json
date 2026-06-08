@@ -1,0 +1,16 @@
+{
+  "name": "Épika V4.5 - Lector de Voz",
+  "short_name": "Épika",
+  "start_url": "/epika_v4.5.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "icono.ico",
+      "sizes": "32x32 48x48 64x64",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ]
+}
